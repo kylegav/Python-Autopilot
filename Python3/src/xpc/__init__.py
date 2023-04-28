@@ -1,6 +1,7 @@
 import socket
 import struct
 
+
 class XPlaneConnect(object):
     """XPlaneConnect (XPC) facilitates communication to and from the XPCPlugin."""
     socket = None
@@ -56,10 +57,10 @@ class XPlaneConnect(object):
             self.socket.close()
             self.socket = None
 
-    def  sendUDP(self, buffer):
+    def sendUDP(self, buffer):
         """Sends a message over the underlying UDP socket."""
         # Preconditions
-        if(len(buffer) == 0):
+        if (len(buffer) == 0):
             raise ValueError("sendUDP: buffer is empty.")
 
         self.socket.sendto(buffer, 0, self.xpDst)
@@ -76,15 +77,15 @@ class XPlaneConnect(object):
               port: The new port to use.
         """
 
-        #Validate parameters
+        # Validate parameters
         if port < 0 or port > 65535:
             raise ValueError("The specified port is not a valid port number.")
 
-        #Send command
+        # Send command
         buffer = struct.pack(b"<4sxH", b"CONN", port)
         self.sendUDP(buffer)
 
-        #Rebind socket
+        # Rebind socket
         clientAddr = ("0.0.0.0", port)
         timeout = self.socket.gettimeout()
         self.socket.close()
@@ -92,7 +93,7 @@ class XPlaneConnect(object):
         self.socket.bind(clientAddr)
         self.socket.settimeout(timeout)
 
-        #Read response
+        # Read response
         buffer = self.socket.recv(1024)
 
     def pauseSim(self, pause):
@@ -123,7 +124,7 @@ class XPlaneConnect(object):
         rows = (len(buffer) - 5) // 36
         data = []
         for i in range(rows):
-            data.append(struct.unpack_from(b"9f", buffer, 5 + 36*i))
+            data.append(struct.unpack_from(b"9f", buffer, 5 + 36 * i))
         return data
 
     def sendDATA(self, data):
@@ -228,7 +229,7 @@ class XPlaneConnect(object):
             raise ValueError("Unexpected header: " + result[0])
 
         # Drop the header from the return value
-        result =result[1:7] + result[8:]
+        result = result[1:7] + result[8:]
         return result
 
     def sendCTRL(self, values: list, ac=0):

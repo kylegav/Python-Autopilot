@@ -1,13 +1,9 @@
 
 import time
-
-
 class PID:
-    """PID Controller
-    """
-
     def __init__(self, P=0.2, I=0.0, D=0.0, current_time=None):
 
+        self.windup_guard = 20.0
         self.Kp = P
         self.Ki = I
         self.Kd = D
@@ -23,9 +19,7 @@ class PID:
         self.clear()
 
     def clear(self):
-        """Clears PID computations and coefficients"""
         self.SetPoint = 0.0
-
         self.PTerm = 0.0
         self.ITerm = 0.0
         self.DTerm = 0.0
@@ -38,14 +32,12 @@ class PID:
         self.output = 0.0
 
     def update(self, feedback_value, current_time=None):
-        """Calculates PID value for given reference feedback
-        .. math::
-            u(t) = K_p e(t) + K_i \int_{0}^{t} e(t)dt + K_d {de}/{dt}
-        .. figure:: images/pid_1.png
-           :align:   center
-           Test PID with Kp=1.2, Ki=1, Kd=0.001 (test_pid.py)
-        """
-        """                 2 - 4 = -2 pitch down 2           """
+
+        """u(t) = K_p e(t) + K_i \int_{0}^{t} e(t)dt + K_d {de}/{dt}
+
+        Test PID with Kp=1.2, Ki=1, Kd=0.001 (test_pid.py)
+                        2 - 4 = -2 pitch down 2           """
+
         error = self.SetPoint - feedback_value
 
         self.current_time = current_time if current_time is not None else time.time()
